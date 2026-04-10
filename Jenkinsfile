@@ -10,7 +10,7 @@ pipeline {
     }
 
     stages {
-        stage('Code') {
+        stage('Code Clone') {
             steps {
                 script {
                     clone("main", "https://github.com/SumnRanjan/jenkins-django-notes-app.git")
