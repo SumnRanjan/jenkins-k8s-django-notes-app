@@ -1,29 +1,61 @@
-@Library('Shared')_
-pipeline{
-    agent { label 'dev-server'}
-    
-    stages{
-        stage("Code clone"){
-            steps{
-                sh "whoami"
-            clone("https://github.com/SumnRanjan/jenkins-django-notes-app","main")
+@Library("Shared") _
+
+pipeline {
+    agent {
+        label 'ubuntu'
+    }
+
+    environment {
+        IMAGE_NAME = 'notes-app'
+    }
+
+    stages {
+        stage('Hello') {
+            steps {
+                script {
+                    hello()
+                }
             }
         }
-        stage("Code Build"){
-            steps{
-            dockerbuild("notes-app","latest")
+
+        stage('Code') {
+            steps {
+                script {
+                    clone("main", "https://github.com/SumnRanjan/jenkins-django-notes-app.git")
+                }
             }
         }
-        stage("Push to DockerHub"){
-            steps{
-                dockerpush("dockerHubCreds","notes-app","latest")
+
+        stage('Build') {
+            steps {
+                script {
+                    buildImage(env.IMAGE_NAME)
+                }
             }
         }
-        stage("Deploy"){
-            steps{
-                deploy()
+
+        stage('Push To DockerHub') {
+            steps {
+                script {
+                    pushToDockerHub(env.IMAGE_NAME, 'dockerHubCred')
+                }
             }
         }
-        
+
+        stage('Test') {
+            steps {
+                script {
+                    runTests()
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    deployApp()
+                }
+            }
+        }
     }
 }
