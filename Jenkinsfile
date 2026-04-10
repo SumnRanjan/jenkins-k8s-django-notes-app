@@ -10,14 +10,6 @@ pipeline {
     }
 
     stages {
-        stage('Hello') {
-            steps {
-                script {
-                    hello()
-                }
-            }
-        }
-
         stage('Code') {
             steps {
                 script {
