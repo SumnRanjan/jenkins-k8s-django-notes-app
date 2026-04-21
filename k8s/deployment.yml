@@ -18,6 +18,7 @@ spec:
           image: rocketboies/notes-app-k8s:latest
           ports:
             - containerPort: 8000
+
           env:
             - name: DB_NAME
               value: "notesapp"
@@ -29,3 +30,36 @@ spec:
               value: "mysql-service"
             - name: DB_PORT
               value: "3306"
+
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 300m
+              memory: 512Mi
+
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8000
+            failureThreshold: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3

@@ -18,8 +18,39 @@ spec:
           image: mysql:8.0
           ports:
             - containerPort: 3306
+
           env:
             - name: MYSQL_ROOT_PASSWORD
-              value: root123
+              value: "root123"
             - name: MYSQL_DATABASE
-              value: notesapp
+              value: "notesapp"
+
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+
+          startupProbe:
+            tcpSocket:
+              port: 3306
+            failureThreshold: 30
+            periodSeconds: 10
+
+          readinessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            tcpSocket:
+              port: 3306
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
